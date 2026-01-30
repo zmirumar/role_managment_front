@@ -10,11 +10,16 @@ interface User {
   updated_at: string;
 }
 
+interface Permissions {
+  [key: string]: boolean;
+}
+
 interface AuthState {
   token: string | null;
   isLogged: boolean;
   user: User | null;
-  login: (token: string, user: User) => void;
+  permissions: Permissions;
+  login: (token: string, user: User, permissions: Permissions) => void;
   logout: () => void;
 }
 
@@ -24,11 +29,12 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isLogged: false,
       user: null,
-      login: (token: string, user: User) => {
-        set({ token, isLogged: true, user });
+      permissions: {},
+      login: (token, user, permissions) => {
+        set({ token, isLogged: true, user, permissions });
       },
       logout: () => {
-        set({ token: null, isLogged: false, user: null });
+        set({ token: null, isLogged: false, user: null, permissions: {} });
       },
     }),
     {

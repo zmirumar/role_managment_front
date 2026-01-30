@@ -1,27 +1,22 @@
-import { Button } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/useAuthStore';
 import Posts from '../../features/Posts'
-import { routes } from '../../constants/routes';
+import { useCustomQuery } from '../../hooks/useCustomQuery';
+import { useEffect } from 'react';
 
 function Home() {
-  const { user } = useAuthStore();
-  const navigate = useNavigate();
+  const { data, isLoading, error, refetch } = useCustomQuery<any[]>({
+    method: "GET",
+    url: "/posts",
+  });
+
+  useEffect(() => {
+    const handleUpdate = () => refetch();
+    window.addEventListener('posts-updated', handleUpdate);
+    return () => window.removeEventListener('posts-updated', handleUpdate);
+  }, [refetch]);
 
   return (
-    <div style={{ padding: '20px' }}>
-      {user?.role === 'OWNER' && (
-        <div style={{ marginBottom: '20px', textAlign: 'right' }}>
-          <Button
-            type="primary"
-            onClick={() => navigate(routes.ADMIN_DASHBOARD)}
-            size="large"
-          >
-            Admin Dashboard
-          </Button>
-        </div>
-      )}
-      <Posts />
+    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+      <Posts data={data as any} isLoading={isLoading} error={error} />
     </div>
   )
 }

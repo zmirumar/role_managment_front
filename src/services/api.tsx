@@ -10,10 +10,20 @@ export const axiosInstance = axios.create({
     },
 });
 
-// FIX: Dynamic Authorization Header
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token");
+        const authStorage = localStorage.getItem("auth-storage");
+        let token = null;
+
+        if (authStorage) {
+            try {
+                const parsed = JSON.parse(authStorage);
+                token = parsed.state?.token;
+            } catch (e) {
+                console.error("Error parsing auth-storage", e);
+            }
+        }
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

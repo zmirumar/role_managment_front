@@ -12,7 +12,7 @@ function Login() {
     method: "POST",
     url: "/login",
     onSuccess: (data: any) => {
-      login(data.token, data.user);
+      login(data.token, data.user, data.permissions);
       navigate("/");
     },
   });
