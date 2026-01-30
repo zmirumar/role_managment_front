@@ -4,6 +4,7 @@ import { Button, Space, Modal, message, Popconfirm, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import CreatePosts from "../CreatePost";
+import { PostsContainer, PostCard, PostContent } from "./styles";
 
 interface Post {
   id: number;
@@ -63,27 +64,14 @@ function Posts({ data: propData, isLoading: propLoading, error: propError }: Pos
     return <div>Error loading posts: {error.message}</div>
   }
   return (
-    <div>
-      <h1 style={{ marginBottom: '20px' }}>Latest Posts</h1>
+    <PostsContainer>
+      <h1>Latest Posts</h1>
       {data?.map((post: Post) => (
-        <div
-          key={post.id}
-          style={{
-            border: "1px solid #f0f0f0",
-            padding: '20px',
-            marginBottom: '15px',
-            borderRadius: '12px',
-            backgroundColor: '#fff',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
-          }}
-        >
-          <div style={{ flex: 1 }}>
-            <h2 style={{ margin: '0 0 10px 0', fontSize: '1.4rem' }}>{post.title}</h2>
-            <p style={{ color: '#555', fontSize: '1.05rem', lineHeight: '1.6' }}>{post.content}</p>
-          </div>
+        <PostCard key={post.id}>
+          <PostContent>
+            <h2>{post.title}</h2>
+            <p>{post.content}</p>
+          </PostContent>
 
           <Space size="middle" style={{ marginLeft: '20px' }}>
             {permissions['post.edit'] && (
@@ -113,7 +101,7 @@ function Posts({ data: propData, isLoading: propLoading, error: propError }: Pos
               </Tooltip>
             )}
           </Space>
-        </div>
+        </PostCard>
       ))}
 
       <Modal
@@ -131,7 +119,7 @@ function Posts({ data: propData, isLoading: propLoading, error: propError }: Pos
           />
         )}
       </Modal>
-    </div>
+    </PostsContainer>
   )
 }
 

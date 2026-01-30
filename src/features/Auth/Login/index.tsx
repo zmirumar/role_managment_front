@@ -1,7 +1,8 @@
 import { Button, Form, Input } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/useAuthStore";
 import { useCustomQuery } from "../../../hooks/useCustomQuery";
+import { AuthContainer, AuthCard } from "../styles";
 
 function Login() {
   const [form] = Form.useForm();
@@ -17,39 +18,44 @@ function Login() {
     },
   });
 
-
   if (isLoading) {
-    return <div>Loading...</div>
+    return <AuthContainer>Loading...</AuthContainer>
   }
-  if (error) {
-    return <div>Error: {error.message}</div>
-  }
+
   const onFinish = (values: any) => {
     mutate(values);
   };
 
   return (
-    <div style={{ maxWidth: 300, margin: "0 auto", marginTop: 100 }}>
-      <h1>Login</h1>
-      <Form
-        form={form}
-        onFinish={onFinish}
-      >
-        <Form.Item name="username" rules={[{ required: true, message: 'Please input your Username!' }]}>
-          <Input placeholder="Username" />
-        </Form.Item>
-        <Form.Item name="password" rules={[{ required: true, message: 'Please input your Password!' }]}>
-          <Input.Password placeholder="Password" />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary"
-            htmlType="submit"
-            block
-          >Login</Button>
-        </Form.Item>
-      </Form>
-      <h4>Do not have account yet? <a href="/register">Register</a></h4>
-    </div>
+    <AuthContainer>
+      <AuthCard>
+        <h1>Login</h1>
+        {error && <div style={{ color: 'red', marginBottom: '10px' }}>Error: {error.message}</div>}
+        <Form
+          form={form}
+          onFinish={onFinish}
+          layout="vertical"
+        >
+          <Form.Item name="username" rules={[{ required: true, message: 'Please input your Username!' }]}>
+            <Input placeholder="Username" size="large" />
+          </Form.Item>
+          <Form.Item name="password" rules={[{ required: true, message: 'Please input your Password!' }]}>
+            <Input.Password placeholder="Password" size="large" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary"
+              htmlType="submit"
+              block
+              size="large"
+              loading={isLoading}
+            >Login</Button>
+          </Form.Item>
+        </Form>
+        <h4 style={{ textAlign: 'center', marginTop: '15px' }}>
+          Do not have account yet? <Link to="/register">Register</Link>
+        </h4>
+      </AuthCard>
+    </AuthContainer>
   )
 }
 

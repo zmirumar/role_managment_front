@@ -1,5 +1,6 @@
 import { Table, Select, message, Checkbox, Card, Row, Col, Divider } from 'antd'
 import { useCustomQuery } from '../../hooks/useCustomQuery';
+import { AdminContainer, PermissionItem } from './styles';
 
 interface Permission {
   id: number;
@@ -99,10 +100,12 @@ function AdminDash() {
           onChange={(value) => handleRoleChange(record.id, value)}
           loading={isUpdatingRole}
           disabled={record.role?.slug === 'OWNER'}
+          options={[
+            { value: 'USER', label: 'USER' },
+            { value: 'ADMIN', label: 'ADMIN' },
+            { value: 'SUPERADMIN', label: 'SUPERADMIN' },
+          ]}
         >
-          <Select.Option value="USER">USER</Select.Option>
-          <Select.Option value="ADMIN">ADMIN</Select.Option>
-          <Select.Option value="SUPERADMIN">SUPERADMIN</Select.Option>
         </Select>
       ),
     },
@@ -116,7 +119,7 @@ function AdminDash() {
   const filteredRoles = roles?.filter(r => r.slug !== 'OWNER');
 
   return (
-    <div style={{ padding: '24px' }}>
+    <AdminContainer>
       <h1>User Management</h1>
       <Table
         dataSource={filteredUsers}
@@ -132,7 +135,7 @@ function AdminDash() {
           <Col span={8} key={role.id}>
             <Card title={role.name} bordered={true}>
               {allPermissions.map(perm => (
-                <div key={perm} style={{ marginBottom: '8px' }}>
+                <PermissionItem key={perm}>
                   <Checkbox
                     checked={role.permissions.some(p => p.slug === perm)}
                     onChange={(e) => handlePermissionChange(role.id, perm, e.target.checked, role.permissions)}
@@ -140,14 +143,14 @@ function AdminDash() {
                   >
                     {perm.replace('.', ' ').toUpperCase()}
                   </Checkbox>
-                </div>
+                </PermissionItem>
               ))}
             </Card>
           </Col>
         ))}
       </Row>
-    </div>
+    </AdminContainer>
   )
 }
 
-export default AdminDash
+export default AdminDash;

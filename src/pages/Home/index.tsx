@@ -1,6 +1,7 @@
 import Posts from '../../features/Posts'
 import { useCustomQuery } from '../../hooks/useCustomQuery';
 import { useEffect } from 'react';
+import { HomeContainer } from './styles';
 
 function Home() {
   const { data, isLoading, error, refetch } = useCustomQuery<any[]>({
@@ -15,9 +16,9 @@ function Home() {
   }, [refetch]);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+    <HomeContainer>
       <Posts data={data as any} isLoading={isLoading} error={error} />
-    </div>
+    </HomeContainer>
   )
 }
 

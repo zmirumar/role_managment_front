@@ -1,11 +1,11 @@
 import { routes } from "../constants/routes";
 import Register from "../features/Auth/Register";
 import AdminDashboard from "../pages/Admin";
-import  Auth from "../pages/Auth";
+import Auth from "../pages/Auth";
 import CreatePost from "../pages/CreatePost";
-import  Home from "../pages/Home";
+import Home from "../pages/Home";
 
-                                                                                                                                                                                                                                                                                                                                                                                        
+
 export const publicRoutes = [
   {
     path: routes.LOGIN,
@@ -14,7 +14,7 @@ export const publicRoutes = [
   {
     path: routes.REGISTER,
     element: Register,
-  },                                                                                                                                                        
+  },
 ];
 
 export const privateRoutes = [
@@ -25,9 +25,11 @@ export const privateRoutes = [
   {
     path: routes.CREATE_POST,
     element: CreatePost,
+    permission: "post.create",
   },
   {
     path: routes.ADMIN_DASHBOARD,
     element: AdminDashboard,
+    permission: "admin.access",
   }
 ];

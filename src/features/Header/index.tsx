@@ -1,44 +1,32 @@
-import { Button, Layout, Space, Modal } from "antd";
+import { Button, Space } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 import { routes } from "../../constants/routes";
-import { useState } from "react";
-import CreatePosts from "../CreatePost";
-import { queryCache } from "../../hooks/queryCache";
-
-const { Header: AntHeader } = Layout;
+import { StyledHeader, Logo, UserInfo } from "./styles";
 
 function Header() {
     const { user, logout, isLogged, permissions } = useAuthStore();
     const navigate = useNavigate();
     const location = useLocation();
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
         navigate(routes.LOGIN);
     };
 
-    const handleCreatePostSuccess = () => {
-        setIsModalOpen(false);
-        queryCache.invalidate("/posts");
-        // Dispatch custom event to notify other components (like Home) to refetch
-        window.dispatchEvent(new CustomEvent('posts-updated'));
-    };
-
     if (!isLogged) return null;
 
     return (
-        <AntHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', padding: '0 20px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', marginBottom: '20px' }}>
-            <div style={{ fontSize: '20px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigate(routes.HOME)}>
+        <StyledHeader>
+            <Logo onClick={() => navigate(routes.HOME)}>
                 Role Manager
-            </div>
+            </Logo>
 
             <Space>
-                {permissions['post.create'] && (
+                {permissions['post.create'] && location.pathname !== routes.CREATE_POST && (
                     <Button
                         type="default"
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => navigate(routes.CREATE_POST)}
                     >
                         Create Post
                     </Button>
@@ -53,7 +41,7 @@ function Header() {
                     </Button>
                 )}
 
-                {location.pathname === routes.ADMIN_DASHBOARD && (
+                {(location.pathname === routes.ADMIN_DASHBOARD || location.pathname === routes.CREATE_POST) && (
                     <Button
                         onClick={() => navigate(routes.HOME)}
                     >
@@ -61,25 +49,15 @@ function Header() {
                     </Button>
                 )}
 
-                <div style={{ marginRight: '10px' }}>
+                <UserInfo>
                     <strong>{user?.username}</strong> ({user?.role})
-                </div>
+                </UserInfo>
 
                 <Button danger onClick={handleLogout}>
                     Logout
                 </Button>
             </Space>
-
-            <Modal
-                title="Create New Post"
-                open={isModalOpen}
-                onCancel={() => setIsModalOpen(false)}
-                footer={null}
-                destroyOnClose
-            >
-                <CreatePosts onSuccess={handleCreatePostSuccess} />
-            </Modal>
-        </AntHeader>
+        </StyledHeader>
     );
 }
 

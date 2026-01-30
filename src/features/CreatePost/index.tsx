@@ -1,6 +1,7 @@
 import { Button, Form, Input, message } from 'antd'
 import { useCustomQuery } from '../../hooks/useCustomQuery';
 import { useEffect } from 'react';
+import { FormContainer } from './styles';
 
 interface CreatePostsProps {
   onSuccess?: () => void;
@@ -37,7 +38,7 @@ function CreatePosts({ onSuccess, initialValues, mode = 'create' }: CreatePostsP
   };
 
   return (
-    <div style={{ marginBottom: isEdit ? '0' : '20px', padding: isEdit ? '0' : '20px', border: isEdit ? 'none' : '1px solid #f0f0f0', borderRadius: '8px' }}>
+    <FormContainer $isEdit={isEdit}>
       {!isEdit && <h2>Create New Post</h2>}
       <Form form={form} onFinish={onFinish} layout="vertical">
         <Form.Item label="Title" name="title" rules={[{ required: true, message: 'Please input the title!' }]}>
@@ -52,8 +53,8 @@ function CreatePosts({ onSuccess, initialValues, mode = 'create' }: CreatePostsP
           </Button>
         </Form.Item>
       </Form>
-    </div>
+    </FormContainer>
   )
 }
 
-export default CreatePosts
+export default CreatePosts;

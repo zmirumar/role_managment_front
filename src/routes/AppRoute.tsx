@@ -8,7 +8,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { routes } from "../constants/routes";
 
 const AppRoute = () => {
-  const { user } = useAuthStore();
+  const { permissions, user } = useAuthStore();
 
   return (
     <Routes>
@@ -25,7 +25,9 @@ const AppRoute = () => {
         </React.Fragment>
       ))}
       {privateRoutes.map((el) => {
+        const hasPermission = !el.permission || permissions[el.permission];
         const isOwnerRoute = el.path === routes.ADMIN_DASHBOARD;
+        const canAccess = isOwnerRoute ? (user?.role === "OWNER" || hasPermission) : hasPermission;
 
         return (
           <React.Fragment key={el.path}>
@@ -33,14 +35,10 @@ const AppRoute = () => {
               path={el.path}
               element={
                 <Private>
-                  {isOwnerRoute ? (
-                    user?.role === "OWNER" ? (
-                      <el.element />
-                    ) : (
-                      <NotFound />
-                    )
-                  ) : (
+                  {canAccess ? (
                     <el.element />
+                  ) : (
+                    <NotFound />
                   )}
                 </Private>
               }
