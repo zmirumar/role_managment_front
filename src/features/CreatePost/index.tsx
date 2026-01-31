@@ -1,13 +1,8 @@
 import { Button, Form, Input, message } from 'antd'
-import { useCustomQuery } from '../../hooks/useCustomQuery';
+import { useCustomQuery } from '../../hooks/CustomQuery/useCustomQuery';
 import { useEffect } from 'react';
 import { FormContainer } from './styles';
-
-interface CreatePostsProps {
-  onSuccess?: () => void;
-  initialValues?: { id: number, title: string, content: string };
-  mode?: 'create' | 'edit';
-}
+import type { CreatePostsProps } from '../../interfaces/interfaces';
 
 function CreatePosts({ onSuccess, initialValues, mode = 'create' }: CreatePostsProps) {
   const [form] = Form.useForm();

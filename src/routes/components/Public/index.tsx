@@ -1,10 +1,7 @@
 import { useAuthStore } from "../../../store/useAuthStore";
-import type { FC, ReactNode } from "react";
+import type { FC } from "react";
 import { Navigate } from "react-router-dom";
-
-interface IPublicRoute {
-  children: ReactNode;
-}
+import type { IPublicRoute } from "../../../interfaces/interfaces";
 
 const PublicRoute: FC<IPublicRoute> = ({ children }) => {
   const { isLogged } = useAuthStore();

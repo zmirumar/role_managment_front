@@ -1,7 +1,4 @@
-interface CacheEntry<T> {
-  data: T;
-  updatedAt: number;
-}
+import type { CacheEntry } from '../../interfaces/interfaces';
 
 const cache = new Map<string, CacheEntry<any>>();
 
@@ -15,7 +12,7 @@ export const queryCache = {
       data,
       updatedAt: Date.now(),
     });
-  },
+  },  
 
   invalidate(key: string) {
     cache.delete(key);

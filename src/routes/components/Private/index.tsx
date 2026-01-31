@@ -1,11 +1,8 @@
 import { Navigate } from "react-router-dom";
-import type { FC, ReactNode } from "react";
+import type { FC } from "react";
 import { routes } from "../../../constants/routes";
 import { useAuthStore } from "../../../store/useAuthStore";
-
-interface IPrivateRoute {
-  children: ReactNode;
-}
+import type { IPrivateRoute } from "../../../interfaces/interfaces";
 
 const PrivateRoute: FC<IPrivateRoute> = ({ children }) => {
   const { isLogged } = useAuthStore();

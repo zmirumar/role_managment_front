@@ -1,19 +1,12 @@
 import Posts from '../../features/Posts'
-import { useCustomQuery } from '../../hooks/useCustomQuery';
-import { useEffect } from 'react';
+import { useCustomQuery } from '../../hooks/CustomQuery/useCustomQuery';
 import { HomeContainer } from './styles';
 
 function Home() {
-  const { data, isLoading, error, refetch } = useCustomQuery<any[]>({
+  const { data, isLoading, error } = useCustomQuery<any[]>({
     method: "GET",
     url: "/posts",
   });
-
-  useEffect(() => {
-    const handleUpdate = () => refetch();
-    window.addEventListener('posts-updated', handleUpdate);
-    return () => window.removeEventListener('posts-updated', handleUpdate);
-  }, [refetch]);
 
   return (
     <HomeContainer>

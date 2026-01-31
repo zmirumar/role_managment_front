@@ -1,5 +1,5 @@
 import { Button, Form, Input } from 'antd'
-import { useCustomQuery } from '../../../hooks/useCustomQuery';
+import { useCustomQuery } from '../../../hooks/CustomQuery/useCustomQuery';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { AuthContainer, AuthCard } from "../styles";

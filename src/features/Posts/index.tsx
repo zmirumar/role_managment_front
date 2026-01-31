@@ -1,22 +1,11 @@
-import { useCustomQuery } from "../../hooks/useCustomQuery";
+import { useCustomQuery } from "../../hooks/CustomQuery/useCustomQuery";
 import { useAuthStore } from "../../store/useAuthStore";
 import { Button, Space, Modal, message, Popconfirm, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import CreatePosts from "../CreatePost";
 import { PostsContainer, PostCard, PostContent } from "./styles";
-
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-}
-
-interface PostsProps {
-  data?: Post[];
-  isLoading?: boolean;
-  error?: Error | null;
-}
+import type { Post, PostsProps } from "../../interfaces/interfaces";
 
 function Posts({ data: propData, isLoading: propLoading, error: propError }: PostsProps) {
   const { permissions } = useAuthStore();
@@ -33,11 +22,7 @@ function Posts({ data: propData, isLoading: propLoading, error: propError }: Pos
     url: "/posts/{id}",
     onSuccess: () => {
       message.success("Post deleted successfully");
-      if (propData) {
-        window.dispatchEvent(new CustomEvent('posts-updated'));
-      } else {
-        refetch();
-      }
+      refetch();
     },
     onError: (err) => {
       message.error("Failed to delete post: " + err.message);
@@ -50,11 +35,7 @@ function Posts({ data: propData, isLoading: propLoading, error: propError }: Pos
 
   const handleEditSuccess = () => {
     setEditingPost(null);
-    if (propData) {
-      window.dispatchEvent(new CustomEvent('posts-updated'));
-    } else {
-      refetch();
-    }
+    refetch();
   };
 
   if (isLoading) {
@@ -109,7 +90,7 @@ function Posts({ data: propData, isLoading: propLoading, error: propError }: Pos
         open={!!editingPost}
         onCancel={() => setEditingPost(null)}
         footer={null}
-        destroyOnClose
+        destroyOnHidden
       >
         {editingPost && (
           <CreatePosts

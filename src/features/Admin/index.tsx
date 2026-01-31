@@ -1,5 +1,5 @@
 import { Table, Select, message, Checkbox, Card, Row, Col, Divider } from 'antd'
-import { useCustomQuery } from '../../hooks/useCustomQuery';
+import { useCustomQuery } from '../../hooks/CustomQuery/useCustomQuery';
 import { AdminContainer, PermissionItem } from './styles';
 
 interface Permission {

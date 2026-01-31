@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { axiosInstance } from "../services/api";
+import { axiosInstance } from "../../services/api";
 import { queryCache } from "./queryCache";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";

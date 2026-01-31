@@ -1,7 +1,7 @@
 import { Button, Form, Input } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/useAuthStore";
-import { useCustomQuery } from "../../../hooks/useCustomQuery";
+import { useCustomQuery } from "../../../hooks/CustomQuery/useCustomQuery";
 import { AuthContainer, AuthCard } from "../styles";
 
 function Login() {
