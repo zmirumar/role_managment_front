@@ -32,7 +32,7 @@ function Header() {
                     </Button>
                 )}
 
-                {user?.role === 'OWNER' && location.pathname !== routes.ADMIN_DASHBOARD && (
+                {user?.role === 'ADMIN' && location.pathname !== routes.ADMIN_DASHBOARD && (
                     <Button
                         type="primary"
                         onClick={() => navigate(routes.ADMIN_DASHBOARD)}

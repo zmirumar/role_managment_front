@@ -27,7 +27,7 @@ const AppRoute = () => {
       {privateRoutes.map((el) => {
         const hasPermission = !el.permission || permissions[el.permission];
         const isOwnerRoute = el.path === routes.ADMIN_DASHBOARD;
-        const canAccess = isOwnerRoute ? (user?.role === "OWNER" || hasPermission) : hasPermission;
+        const canAccess = isOwnerRoute ? (user?.role === "ADMIN" || hasPermission) : hasPermission;
 
         return (
           <React.Fragment key={el.path}>
