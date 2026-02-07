@@ -1,4 +1,7 @@
-import type { CacheEntry } from '../../interfaces/interfaces';
+type CacheEntry<T> = {
+  data: T;
+  updatedAt: number;
+};
 
 const cache = new Map<string, CacheEntry<any>>();
 

@@ -5,16 +5,15 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import CreatePosts from "../CreatePost";
 import { PostsContainer, PostCard, PostContent } from "./styles";
-import type { Post, PostsProps } from "../../interfaces/interfaces";
+import type { Post } from "../../interfaces/interfaces";
 
-function Posts({ data: propData, isLoading: propLoading, error: propError }: PostsProps) {
+function Posts() {
   const { permissions } = useAuthStore();
   const [editingPost, setEditingPost] = useState<Post | null>(null);
 
-  const { data: queryData, isLoading: queryLoading, error: queryError, refetch } = useCustomQuery<Post[]>({
+  const { data, isLoading, error, refetch } = useCustomQuery<Post[]>({
     method: "GET",
     url: "/posts",
-    enabled: !propData,
   });
 
   const { mutate: deletePost, isLoading: isDeleting } = useCustomQuery<any, { id: number }>({
@@ -24,14 +23,12 @@ function Posts({ data: propData, isLoading: propLoading, error: propError }: Pos
       message.success("Post deleted successfully");
       refetch();
     },
-    onError: (err) => {
+    onError: (err: Error) => {
       message.error("Failed to delete post: " + err.message);
     }
   });
 
-  const data = propData || queryData;
-  const isLoading = propLoading !== undefined ? propLoading : queryLoading;
-  const error = propError !== undefined ? propError : queryError;
+
 
   const handleEditSuccess = () => {
     setEditingPost(null);

@@ -4,39 +4,41 @@ import { queryCache } from "./queryCache";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
-interface BaseOptions {
+type BaseOptions = {
   url: string;
   retry?: number;
   enabled?: boolean;
   staleTime?: number;
   queryKey?: string[];
-}
+};
 
-interface QueryOptions<T> extends BaseOptions {
+type QueryOptions = BaseOptions & {
   method: "GET";
   params?: Record<string, any>;
-}
+};
 
-interface MutationOptions<T, V> extends BaseOptions {
+type MutationOptions<T, V> = BaseOptions & {
   method: Exclude<HttpMethod, "GET">;
   onSuccess?: (data: T) => void;
   onError?: (error: Error) => void;
-}
+  /** Placeholder to keep V used in type system */
+  __v?: V;
+};
 
-interface QueryResult<T> {
+export type QueryResult<T> = {
   data?: T;
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
-}
+};
 
-interface MutationResult<T, V> {
+export type MutationResult<T, V> = {
   data?: T;
   isLoading: boolean;
   error: Error | null;
   mutate: (variables: V) => Promise<void>;
   mutateAsync: (variables: V) => Promise<T>;
-}
+};
 
 function getCacheKey(url: string, params?: Record<string, any>, queryKey?: string[]) {
   if (queryKey?.length) return JSON.stringify(queryKey);
@@ -79,17 +81,16 @@ async function retryRequest<T>(fn: () => Promise<T>, count: number): Promise<T> 
   throw new Error("Request failed");
 }
 
-export function useCustomQuery<T>(options: QueryOptions<T>): QueryResult<T>;
-export function useCustomQuery<T, V>(options: MutationOptions<T, V>): MutationResult<T, V>;
-
-export function useCustomQuery<T, V = void>(options: QueryOptions<T> | MutationOptions<T, V>) {
+export function useCustomQuery<T>(options: QueryOptions): QueryResult<T>;
+export function useCustomQuery<T, V = void>(options: MutationOptions<T, V>): MutationResult<T, V>;
+export function useCustomQuery<T = any, V = any>(options: QueryOptions | MutationOptions<T, V>): QueryResult<T> | MutationResult<T, V> {
   const { method, url, retry = 1, enabled = true } = options;
   const [data, setData] = useState<T>();
   const [isLoading, setIsLoading] = useState(method === "GET");
   const [error, setError] = useState<Error | null>(null);
 
   if (method === "GET") {
-    const { params, staleTime = 5 * 60 * 1000, queryKey } = options as QueryOptions<T>;
+    const { params, staleTime = 5 * 60 * 1000, queryKey } = options as QueryOptions;
     const cacheKey = getCacheKey(url, params, queryKey);
 
     const fetchData = useCallback(async () => {

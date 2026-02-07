@@ -1,8 +1,8 @@
-import { Table, Select, message, Checkbox, Card, Row, Col, Divider, Modal, Input, Statistic, Button, Tag, Space } from 'antd'
-import { useState, useMemo } from 'react';
+import { Table, Select, message, Checkbox, Card, Row, Col, Divider, Drawer, Input, Button, Tag, Space, Popconfirm } from 'antd'
+import { useState } from 'react';
 import { useCustomQuery } from '../../hooks/CustomQuery/useCustomQuery';
 import { AdminContainer, PermissionItem } from './styles';
-import { UserOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 interface Permission {
   id: number;
@@ -27,12 +27,17 @@ interface User {
 
 function AdminDash() {
   const [selectedRoleFilter, setSelectedRoleFilter] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [newRoleName, setNewRoleName] = useState('');
+
+  const [editUsername, setEditUsername] = useState<string>('');
+  const [editPassword, setEditPassword] = useState<string>('');
+  const [newRoleName, setNewRoleName] = useState<string>('');
+  const [selectValue, setSelectValue] = useState<string>('');
   const [newRolePermissions, setNewRolePermissions] = useState<string[]>([]);
 
-  const { data: users, isLoading: usersLoading, refetch: refetchUsers } = useCustomQuery<User[]>({
+  const { data: users, isLoading: usersLoading, refetch: 
+    refetchUsers } = useCustomQuery<User[]>({
     method: "GET",
     url: "/admin/users",
   });
@@ -42,17 +47,30 @@ function AdminDash() {
     url: "/admin/roles",
   });
 
-  const { mutate: updateRole, isLoading: isUpdatingRole } = useCustomQuery<any, { id: number, role: string, permissions: string[] }>({
+  const { mutate: updateUser, isLoading: isUpdatingUser } = useCustomQuery<any, { id: number; username: string; password?: string; role: string; permissions: string[] }>({
     method: "PUT",
-    url: "/admin/users/{id}/role",
+    url: "/admin/users/{id}",
     onSuccess: () => {
-      message.success("Role and permissions updated successfully");
+      message.success("User updated successfully");
       refetchUsers();
-      refetchRoles(); // Refetch roles as new one might be created
+      refetchRoles();
       setIsModalOpen(false);
+      setEditPassword('');
     },
-    onError: (err) => {
-      message.error("Failed to update role: " + err.message);
+    onError: (err: Error) => {
+      message.error("Failed to update user: " + err.message);
+    }
+  });
+
+  const { mutate: deleteUser } = useCustomQuery<any, { id: number }>({
+    method: "DELETE",
+    url: "/admin/users/{id}",
+    onSuccess: () => {
+      message.success("User deleted successfully");
+      refetchUsers();
+    },
+    onError: (err: Error) => {
+      message.error("Failed to delete user: " + err.message);
     }
   });
 
@@ -70,24 +88,43 @@ function AdminDash() {
 
   const handleEditUser = (user: User) => {
     setEditingUser(user);
-    setNewRoleName(user.role?.name || '');
+    setEditUsername(user.username);
+    setEditPassword('');
+    const currentRoleName = user.role?.name || '';
+    setNewRoleName(currentRoleName);
+    setSelectValue(currentRoleName);
     setNewRolePermissions(user.role?.permissions.map(p => p.slug) || []);
     setIsModalOpen(true);
   };
 
-  const handleSaveUserRole = () => {
+  const handleSaveUser = () => {
     if (!editingUser) return;
-    if (!newRoleName.trim()) {
-      message.error("Role name is required");
+    if (!editUsername.trim()) {
+      message.error("Username is required");
       return;
     }
+    if (selectValue === 'NEW_ROLE') {
+      if (!newRoleName.trim()) {
+        message.error("Role name is required");
+        return;
+      }
+      if (newRoleName.toLowerCase() === 'user') {
+        message.error("Cannot create duplicate 'User' role. Please select the existing User role.");
+        return;
+      }
+    }
 
-    // Now we send both role name and the selected permissions
-    updateRole({
+    updateUser({
       id: editingUser.id,
+      username: editUsername,
+      password: editPassword || undefined,
       role: newRoleName,
       permissions: newRolePermissions
     });
+  };
+
+  const handleDeleteUser = (id: number) => {
+    deleteUser({ id });
   };
 
   const toggleModalPermission = (permSlug: string, checked: boolean) => {
@@ -97,13 +134,6 @@ function AdminDash() {
       setNewRolePermissions(prev => prev.filter(p => p !== permSlug));
     }
   };
-
-  const currentRolePermissions = useMemo(() => {
-    // Find the role matching newRoleName to show its current permissions if it exists
-    // This helps the user see what they are assigning.
-    const existingRole = roles?.find(r => r.name.toLowerCase() === newRoleName.toLowerCase() || r.slug.toLowerCase() === newRoleName.toLowerCase());
-    return existingRole ? existingRole.permissions.map(p => p.slug) : [];
-  }, [roles, newRoleName]);
 
 
   const handleGlobalPermissionChange = (roleId: number, permissionSlug: string, checked: boolean, currentPermissions: Permission[]) => {
@@ -138,13 +168,30 @@ function AdminDash() {
       title: 'Action',
       key: 'action',
       render: (_: any, record: User) => (
-        <Button
-          type="link"
-          onClick={() => handleEditUser(record)}
-          disabled={record.role?.slug === 'ADMIN'}
-        >
-          Edit Role
-        </Button>
+        <Space>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            size="small"
+            onClick={() => handleEditUser(record)}
+            disabled={record.role?.slug === 'ADMIN'}
+          >
+            Edit
+          </Button>
+          {record.role?.slug !== 'ADMIN' && (
+            <Popconfirm
+              title="Delete User"
+              description="Are you sure you want to delete this user?"
+              onConfirm={() => handleDeleteUser(record.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="primary" danger icon={<DeleteOutlined />} size="small">
+                Delete
+              </Button>
+            </Popconfirm>
+          )}
+        </Space>
       ),
     },
   ];
@@ -153,12 +200,8 @@ function AdminDash() {
     return <div>Loading...</div>
   }
 
-  // Statistics
-  const totalUsers = users?.length || 0;
-  const adminCount = users?.filter(u => u.role?.slug === 'ADMIN').length || 0;
-  const userCount = users?.filter(u => u.role?.slug === 'USER').length || 0;
 
-  // Filter
+
   const filteredUsers = users?.filter(u => {
     if (selectedRoleFilter) {
       return u.role?.slug === selectedRoleFilter;
@@ -166,36 +209,11 @@ function AdminDash() {
     return true;
   });
 
-  // Bottom Panel: Show ADMIN (disabled) and others (enabled)
-  // Requirement: "show only a Admin(Current Owner) ... and we should allow all of cheboxes and couse we are admin and make this cheboex un changeble, and there we should show only a users permisions what they can do that is so."
-  // Wait, the prompt says "show only a Admin... and we should show only a users permisions".
-  // I interpret this as: Show ADMIN column/card (all checked, disabled) AND show other roles (USER, etc) as editable.
-  // Actually, standard Admin dashboards usually show all roles.
-  // Let's filter roles to show.
   const displayRoles = roles || [];
 
   return (
     <AdminContainer>
-      <h1>Dashboard Overview</h1>
-      <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={8}>
-          <Card>
-            <Statistic title="Total Users" value={totalUsers} prefix={<UserOutlined />} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic title="Admins" value={adminCount} prefix={<SafetyCertificateOutlined />} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic title="Standard Users" value={userCount} prefix={<UserOutlined />} />
-          </Card>
-        </Col>
-      </Row>
 
-      <Divider />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h2>User Management</h2>
@@ -243,49 +261,102 @@ function AdminDash() {
         })}
       </Row>
 
-      <Modal
-        title={`Edit Role for ${editingUser?.username}`}
+      <Drawer
+        title={`Edit User: ${editingUser?.username}`}
+        width={500}
+        onClose={() => setIsModalOpen(false)}
         open={isModalOpen}
-        onOk={handleSaveUserRole}
-        onCancel={() => setIsModalOpen(false)}
-        confirmLoading={isUpdatingRole}
+        extra={
+          <Space>
+            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button type="primary" onClick={handleSaveUser} loading={isUpdatingUser}>
+              Save
+            </Button>
+          </Space>
+        }
       >
-        <div style={{ marginBottom: 16 }}>
-          <p>Role Name:</p>
-          <Input
-            value={newRoleName}
-            onChange={(e) => setNewRoleName(e.target.value)}
-            placeholder="Enter role name (e.g. Editor)"
-          />
-        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-        {/* 
-            Note: As per "one input to role name to that user and botttom of this input should be a chechboxes with every permisions"
-            However, we are updating the User's ROLE, not directly the user's permissions (since permissions are attached to Roles).
-            If the user types a new Role Name (e.g. 'Manager'), we create/assign that role.
-            If we want to also set permissions for 'Manager' right here, we need to know if 'Manager' role exists.
-            
-            Visual Feedback: Show permissions of the typed role name if it exists.
-        */}
-        <div>
-          <p>Permissions associated with this role:</p>
-          {allPermissions.map(perm => {
-            const isChecked = newRolePermissions.includes(perm);
-            return (
-              <PermissionItem key={perm}>
-                <Checkbox
-                  checked={isChecked}
-                  onChange={(e) => toggleModalPermission(perm, e.target.checked)}
-                >
-                  {perm.replace('.', ' ').toUpperCase()}
-                </Checkbox>
-              </PermissionItem>
-            )
-          })}
-        </div>
-      </Modal>
+          <div>
+            <p>Username:</p>
+            <Input
+              value={editUsername}
+              onChange={(e) => setEditUsername(e.target.value)}
+              placeholder="Username"
+            />
+          </div>
 
-    </AdminContainer>
+          <div>
+            <p>New Password (leave empty to keep current):</p>
+            <Input.Password
+              value={editPassword}
+              onChange={(e) => setEditPassword(e.target.value)}
+              placeholder="New Password"
+            />
+          </div>
+
+          <Divider>Role & Permissions</Divider>
+
+          <div style={{ marginBottom: 16 }}>
+            <p>Role:</p>
+            <Select
+              style={{ width: '100%', marginBottom: 8 }}
+              value={selectValue}
+              onChange={(value) => {
+                setSelectValue(value);
+                if (value !== 'NEW_ROLE') {
+                  setNewRoleName(value);
+                  const selectedRole = roles?.find(r => r.name === value);
+                  if (selectedRole) {
+                    setNewRolePermissions(selectedRole.permissions.map(p => p.slug));
+                  }
+                } else {
+                  setNewRoleName('');
+                  setNewRolePermissions([]);
+                }
+              }}
+              placeholder="Select a role"
+            >
+              {roles?.filter(r => r.slug !== 'ADMIN').map(r => (
+                <Select.Option key={r.id} value={r.name}>{r.name}</Select.Option>
+              ))}
+              <Select.Option value="NEW_ROLE" style={{ fontWeight: 'bold', color: '#1890ff' }}>+ Create New Role</Select.Option>
+            </Select>
+
+            {selectValue === 'NEW_ROLE' && (
+              <Input
+                value={newRoleName}
+                onChange={(e) => setNewRoleName(e.target.value)}
+                placeholder="Enter new role name"
+              />
+            )}
+            <small style={{ color: '#888' }}>
+              {selectValue === 'NEW_ROLE'
+                ? "Enter the name for the new role."
+                : "Select an existing role to assign."}
+            </small>
+          </div>
+
+          <div>
+            <p>Permissions for this Role:</p>
+            {allPermissions.map(perm => {
+              const isChecked = newRolePermissions.includes(perm);
+              return (
+                <PermissionItem key={perm}>
+                  <Checkbox
+                    checked={isChecked}
+                    onChange={(e) => toggleModalPermission(perm, e.target.checked)}
+                  >
+                    {perm.replace('.', ' ').toUpperCase()}
+                  </Checkbox>
+                </PermissionItem>
+              )
+            })}
+          </div>
+        </div>
+      </Drawer>
+
+    </AdminContainer >
   )
 }
 
