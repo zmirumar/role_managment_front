@@ -1,12 +1,11 @@
 import AppRoute from "./routes/AppRoute"
-import Header from "./features/Header"
+import MainLayout from "./components/Layout/MainLayout"
 
 function App() {
   return (
-    <div>
-      <Header />
+    <MainLayout>
       <AppRoute />
-    </div>
+    </MainLayout>
   )
 }
 

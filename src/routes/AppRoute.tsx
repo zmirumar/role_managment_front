@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import PublicRoute from "./components/Public";
 import Private from "./components/Private";
 import { useAuthStore } from "../store/useAuthStore";
-import { routes } from "../constants/routes";
+
 
 const AppRoute = () => {
   const { permissions, user } = useAuthStore();
@@ -26,10 +26,10 @@ const AppRoute = () => {
       ))}
       {privateRoutes.map((el) => {
         const hasPermission = !el.permission || permissions[el.permission];
-        const isOwnerRoute = el.path === routes.ADMIN_DASHBOARD;
-        const canAccess = isOwnerRoute ? (user?.role === "ADMIN" || hasPermission) : hasPermission;
+        const canAccess = user?.role === "ADMIN" || hasPermission;
 
         return (
+
           <React.Fragment key={el.path}>
             <Route
               path={el.path}
@@ -46,6 +46,7 @@ const AppRoute = () => {
           </React.Fragment>
         );
       })}
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

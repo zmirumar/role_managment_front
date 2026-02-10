@@ -1,73 +1,81 @@
-# React + TypeScript + Vite
+Step 1: Permission Management
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Remove permission management from the sidebar in the Admin Dashboard.
 
-Currently, two official plugins are available:
+All role-based permissions must be managed only through the Admin Dashboard, not from the sidebar.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Step 2: Sidebar Structure and Review Pages
 
-## React Compiler
+Build a dynamic sidebar that displays only the pages relevant to each user.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+For now, users should only have access to the Review page.
 
-## Expanding the ESLint configuration
+The Review page must contain two tabs:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+A tab where users can leave reviews for OT creators.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+A tab where users can leave positive feedback for the website creators.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Admin control is required for these tabs:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+For example, users may have access to the first tab but be restricted from accessing the second tab.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Step 3: Page-Based Permissions
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+In the Admin Dashboard, add a “Page” section within Permissions.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+This section should allow admins to control which pages are accessible to users, such as enabling or disabling access to the Review page.
+
+Step 4: Permissions Management Page
+
+Create a dedicated Permissions page.
+
+This page will allow admins to manage and assign permissions to roles.
+
+Step 5: Website Feedback Page
+
+Create a separate page in the sidebar containing four tabs:
+
+“Did you like this website?” – Yes
+
+No
+
+Average
+
+Did not like it
+
+Each tab should be selectable by the user as feedback.
+
+Step 6: “Writer of the Month” Permission
+
+Introduce a single special permission that allows selecting the “Best Writer of the Month.”
+
+Only users who have the create.post permission should appear in the selection list.
+
+Step 7: Best Writer Evaluation Page
+
+Add a new page in the sidebar.
+
+Only users with the appropriate permission can access this page.
+
+On this page, the user can:
+
+Select a user who has the create.post permission
+
+Mark or evaluate whether that person qualifies as the Best Writer
+
+Step 8: User Voting Page
+
+Add another sidebar page called “Read the Best”.
+
+Users with the required permission can access this page and participate in the selection or voting process.
+
+Conclusion: Sidebar and Access Control
+
+Create a centralized sidebar on the Home page containing links to user-specific pages.
+
+Some pages will include tables, while others will not.
+
+Access to each page or table must be controlled by Admin permissions.
+
+Users should only see and access pages that they are explicitly authorized to use.
