@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-export const FormContainer = styled.div<{ $isEdit?: boolean }>`
+export const CreatePostStyled = styled.div<{ $isEdit?: boolean }>`
   margin-bottom: ${props => props.$isEdit ? '0' : '20px'};
   padding: ${props => props.$isEdit ? '0' : '20px'};
   border: ${props => props.$isEdit ? 'none' : '1px solid #f0f0f0'};

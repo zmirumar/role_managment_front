@@ -4,7 +4,7 @@ import { Button, Space, Modal, message, Popconfirm, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import CreatePosts from "../CreatePost";
-import { PostsContainer, PostCard, PostContent } from "./styles";
+import { PostsStyled } from "./styles";
 import type { Post } from "../../interfaces/interfaces";
 
 function Posts() {
@@ -28,8 +28,6 @@ function Posts() {
     }
   });
 
-
-
   const handleEditSuccess = () => {
     setEditingPost(null);
     refetch();
@@ -42,44 +40,46 @@ function Posts() {
     return <div>Error loading posts: {error.message}</div>
   }
   return (
-    <PostsContainer>
+    <PostsStyled>
       <h1>Latest Posts</h1>
       {data?.map((post: Post) => (
-        <PostCard key={post.id}>
-          <PostContent>
+        <div className="post-card" key={post.id}>
+          <div className="post-content">
             <h2>{post.title}</h2>
             <p>{post.content}</p>
-          </PostContent>
+          </div>
 
-          <Space size="middle" style={{ marginLeft: '20px' }}>
-            {permissions['post.edit'] && (
-              <Tooltip title="Edit Post">
-                <Button
-                  icon={<EditOutlined />}
-                  onClick={() => setEditingPost(post)}
-                />
-              </Tooltip>
-            )}
-
-            {permissions['post.delete'] && (
-              <Tooltip title="Delete Post">
-                <Popconfirm
-                  title="Delete post"
-                  description="Are you sure to delete this post?"
-                  onConfirm={() => deletePost({ id: post.id })}
-                  okText="Yes"
-                  cancelText="No"
-                  okButtonProps={{ loading: isDeleting }}
-                >
+          <div className="post-actions">
+            <Space size="middle">
+              {permissions['post.edit'] && (
+                <Tooltip title="Edit Post">
                   <Button
-                    danger
-                    icon={<DeleteOutlined />}
+                    icon={<EditOutlined />}
+                    onClick={() => setEditingPost(post)}
                   />
-                </Popconfirm>
-              </Tooltip>
-            )}
-          </Space>
-        </PostCard>
+                </Tooltip>
+              )}
+
+              {permissions['post.delete'] && (
+                <Tooltip title="Delete Post">
+                  <Popconfirm
+                    title="Delete post"
+                    description="Are you sure to delete this post?"
+                    onConfirm={() => deletePost({ id: post.id })}
+                    okText="Yes"
+                    cancelText="No"
+                    okButtonProps={{ loading: isDeleting }}
+                  >
+                    <Button
+                      danger
+                      icon={<DeleteOutlined />}
+                    />
+                  </Popconfirm>
+                </Tooltip>
+              )}
+            </Space>
+          </div>
+        </div>
       ))}
 
       <Modal
@@ -97,7 +97,7 @@ function Posts() {
           />
         )}
       </Modal>
-    </PostsContainer>
+    </PostsStyled>
   )
 }
 

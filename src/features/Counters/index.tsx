@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Tabs, Button, Space, Statistic, Row, Col, Card } from "antd";
+import { CountersStyled } from "./style";
 
 const Counters = () => {
     const [activeTab, setActiveTab] = useState("1");
@@ -18,13 +19,15 @@ const Counters = () => {
     };
 
     const renderCounter = (key: string) => (
-        <Card bordered={false} style={{ textAlign: 'center', background: 'transparent' }}>
-            <Statistic title={`Counter ${key} Value`} value={counts[key]} />
-            <Space style={{ marginTop: 20 }}>
-                <Button type="primary" onClick={() => increment(key)}>Increment</Button>
-                <Button onClick={() => decrement(key)}>Decrement</Button>
-            </Space>
-        </Card>
+        <div className="counter-card">
+            <Card bordered={false}>
+                <Statistic title={`Counter ${key} Value`} value={counts[key]} />
+                <Space>
+                    <Button type="primary" onClick={() => increment(key)}>Increment</Button>
+                    <Button onClick={() => decrement(key)}>Decrement</Button>
+                </Space>
+            </Card>
+        </div>
     );
 
     const items = [
@@ -32,7 +35,7 @@ const Counters = () => {
             key: "1",
             label: "Counter 1",
             children: (
-                <div style={{ padding: '20px' }}>
+                <div className="tab-content">
                     <h1>Counter One</h1>
                     <p>This is the first counter tab.</p>
                     {renderCounter("1")}
@@ -43,7 +46,7 @@ const Counters = () => {
             key: "2",
             label: "Counter 2",
             children: (
-                <div style={{ padding: '20px' }}>
+                <div className="tab-content">
                     <h2>Counter Two</h2>
                     <p>Example item: Banana</p>
                     {renderCounter("2")}
@@ -54,7 +57,7 @@ const Counters = () => {
             key: "3",
             label: "Counter 3",
             children: (
-                <div style={{ padding: '20px' }}>
+                <div className="tab-content">
                     <h3>Counter Three</h3>
                     <p>Example item: Apple</p>
                     {renderCounter("3")}
@@ -64,13 +67,13 @@ const Counters = () => {
     ];
 
     return (
-        <div style={{ padding: '24px', background: '#fff', minHeight: '360px' }}>
+        <CountersStyled>
             <Row justify="center">
                 <Col span={24}>
                     <Tabs activeKey={activeTab} onChange={setActiveTab} items={items} />
                 </Col>
             </Row>
-        </div>
+        </CountersStyled>
     );
 };
 

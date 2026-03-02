@@ -2,7 +2,7 @@ import { Button, Form, Input } from 'antd'
 import { useCustomQuery } from '../../../hooks/CustomQuery/useCustomQuery';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../store/useAuthStore';
-import { AuthContainer, AuthCard } from "../styles";
+import { AuthStyled } from "../styles";
 
 function Register() {
   const [form] = Form.useForm();
@@ -27,14 +27,14 @@ function Register() {
   };
 
   if (isLoading) {
-    return <AuthContainer>Loading...</AuthContainer>
+    return <AuthStyled>Loading...</AuthStyled>
   }
 
   return (
-    <AuthContainer>
-      <AuthCard>
+    <AuthStyled>
+      <div className="auth-card">
         <h1>Register</h1>
-        {error && <div style={{ color: 'red', marginBottom: '10px' }}>Error: {error.message}</div>}
+        {error && <div className="error-message">Error: {error.message}</div>}
         <Form
           form={form}
           onFinish={onFinish}
@@ -52,11 +52,11 @@ function Register() {
             </Button>
           </Form.Item>
         </Form>
-        <h4 style={{ textAlign: 'center', marginTop: '15px' }}>
+        <h4 className="auth-link">
           Already have an account? <Link to="/login">Login</Link>
         </h4>
-      </AuthCard>
-    </AuthContainer>
+      </div>
+    </AuthStyled>
   )
 }
 

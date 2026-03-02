@@ -1,15 +1,17 @@
 import { routes } from "../constants/routes";
 import Register from "../features/Auth/Register";
-import AdminDashboard from "../features/Admin"; // Changed from pages/Admin as we refactored
+import AdminDashboard from "../features/Admin";
 import Users from "../features/Admin/Users";
 import Permissions from "../features/Admin/Permissions";
 import Counters from "../features/Counters";
 import Fruits from "../features/Fruits";
+import Technologies from "../features/Technologies";
 import Auth from "../pages/Auth";
 
 
 import CreatePost from "../pages/CreatePost";
 import Home from "../pages/Home";
+import AdminPages from "../features/Admin/Page";
 
 
 export const publicRoutes = [
@@ -42,6 +44,10 @@ export const privateRoutes = [
     element: Users,
   },
   {
+    path: routes.ADMIN_PAGES,
+    element: AdminPages,
+  },
+  {
     path: routes.ADMIN_PERMISSIONS,
     element: Permissions,
   },
@@ -54,6 +60,11 @@ export const privateRoutes = [
     path: routes.FRUITS,
     element: Fruits,
     permission: "page.fruits",
+  },
+  {
+    path: routes.TECHNOLOGIES,
+    element: Technologies,
+    permission: "page.technologies",
   },
 ];
 

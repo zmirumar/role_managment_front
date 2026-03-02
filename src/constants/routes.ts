@@ -8,4 +8,6 @@ export const routes = {
   ADMIN_PERMISSIONS: '/admin/permissions',
   COUNTERS: '/counters',
   FRUITS: '/fruits',
+  TECHNOLOGIES: '/technologies',
+  ADMIN_PAGES: '/admin/pages',
 };

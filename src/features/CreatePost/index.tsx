@@ -1,7 +1,7 @@
 import { Button, Form, Input, message } from 'antd'
 import { useCustomQuery } from '../../hooks/CustomQuery/useCustomQuery';
 import { useEffect } from 'react';
-import { FormContainer } from './styles';
+import { CreatePostStyled } from './styles';
 import type { CreatePostsProps } from '../../interfaces/interfaces';
 
 function CreatePosts({ onSuccess, initialValues, mode = 'create' }: CreatePostsProps) {
@@ -33,7 +33,7 @@ function CreatePosts({ onSuccess, initialValues, mode = 'create' }: CreatePostsP
   };
 
   return (
-    <FormContainer $isEdit={isEdit}>
+    <CreatePostStyled $isEdit={isEdit}>
       {!isEdit && <h2>Create New Post</h2>}
       <Form form={form} onFinish={onFinish} layout="vertical">
         <Form.Item label="Title" name="title" rules={[{ required: true, message: 'Please input the title!' }]}>
@@ -48,7 +48,7 @@ function CreatePosts({ onSuccess, initialValues, mode = 'create' }: CreatePostsP
           </Button>
         </Form.Item>
       </Form>
-    </FormContainer>
+    </CreatePostStyled>
   )
 }
 

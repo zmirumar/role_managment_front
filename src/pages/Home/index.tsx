@@ -1,11 +1,11 @@
 import Posts from '../../features/Posts'
-import { HomeContainer } from './styles';
+import { HomeStyled } from './styles';
 
 function Home() {
   return (
-    <HomeContainer>
+    <HomeStyled>
       <Posts />
-    </HomeContainer>
+    </HomeStyled>
   )
 }
 

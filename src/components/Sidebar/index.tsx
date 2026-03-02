@@ -10,11 +10,10 @@ import {
     StarOutlined,
 } from '@ant-design/icons';
 
-
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { routes } from '../../constants/routes';
-import { SidebarContainer, UserInfo, BottomSection } from './styles';
+import { SidebarStyled } from './styles';
 
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -52,12 +51,12 @@ const Sidebar = () => {
             icon: <StarOutlined />,
             label: 'Fruits',
         }] : []),
-
+        ...(user?.role === 'ADMIN' || permissions['page.technologies'] ? [{
+            key: routes.TECHNOLOGIES,
+            icon: <DashboardOutlined />,
+            label: 'Technologies',
+        }] : []),
         ...(user?.role === 'ADMIN' ? [{
-
-
-
-
             key: 'admin',
             icon: <DashboardOutlined />,
             label: 'Admin',
@@ -69,13 +68,17 @@ const Sidebar = () => {
                 {
                     key: routes.ADMIN_PERMISSIONS,
                     label: 'Permissions',
+                },
+                {
+                    key: routes.ADMIN_PAGES,
+                    label: "Admin Pages"
                 }
             ]
         }] : []),
     ];
 
     return (
-        <SidebarContainer trigger={null} collapsible collapsed={collapsed} theme="dark">
+        <SidebarStyled trigger={null} collapsible collapsed={collapsed} theme="dark">
             <div className="logo">
                 {collapsed ? 'RM' : 'Role Manager'}
             </div>
@@ -88,12 +91,12 @@ const Sidebar = () => {
                 onClick={({ key }) => navigate(key)}
             />
 
-            <BottomSection>
+            <div className="bottom-section">
                 {!collapsed && user && (
-                    <UserInfo>
+                    <div className="user-info">
                         <span className="username">{user.username}</span>
                         <span className="role">{user.role}</span>
-                    </UserInfo>
+                    </div>
                 )}
 
                 <Menu
@@ -109,7 +112,7 @@ const Sidebar = () => {
                     }]}
                 />
 
-                <div style={{ padding: '8px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <div className="collapse-toggle">
                     <Button
                         type="text"
                         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -117,8 +120,8 @@ const Sidebar = () => {
                         style={{ color: 'white', width: '100%' }}
                     />
                 </div>
-            </BottomSection>
-        </SidebarContainer>
+            </div>
+        </SidebarStyled>
     );
 };
 

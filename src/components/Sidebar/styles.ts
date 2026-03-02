@@ -1,13 +1,11 @@
-import styled from 'styled-components';
-import { Layout } from 'antd';
+import styled from "styled-components";
+import { Layout } from "antd";
 
 const { Sider } = Layout;
 
-export const SidebarContainer = styled(Sider)`
+export const SidebarStyled = styled(Sider)`
   height: 100vh;
-  /* Removed fixed positioning to allow natural layout flow with Ant Design */
 
-  
   .logo {
     height: 32px;
     margin: 16px;
@@ -22,34 +20,40 @@ export const SidebarContainer = styled(Sider)`
     overflow: hidden;
     border-radius: 6px;
   }
-`;
 
-export const UserInfo = styled.div`
-  padding: 12px 16px;
-  color: white;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.1);
-  
-  .username {
-    font-weight: bold;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .role {
-    font-size: 12px;
-    opacity: 0.7;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-`;
+  .user-info {
+    padding: 12px 16px;
+    color: white;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
 
-export const BottomSection = styled.div`
-  position: absolute;
-  bottom: 0;
-  width: 100%;
+    .username {
+      font-weight: bold;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .role {
+      font-size: 12px;
+      opacity: 0.7;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .bottom-section {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .collapse-toggle {
+    padding: 8px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
 `;

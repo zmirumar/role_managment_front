@@ -1,7 +1,7 @@
 import { Table, Select, message, Drawer, Input, Button, Tag, Space, Popconfirm } from 'antd'
 import { useState } from 'react';
 import { useCustomQuery } from '../../../hooks/CustomQuery/useCustomQuery';
-import { AdminContainer } from '../styles';
+import { AdminUsersStyled } from './style';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 interface Permission {
@@ -171,18 +171,19 @@ export default function Users() {
     });
 
     return (
-        <AdminContainer>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <AdminUsersStyled>
+            <div className="users-header">
                 <h2>User Management</h2>
                 <Space>
                     <span>Filter by Role:</span>
-                    <Select
-                        style={{ width: 200 }}
-                        allowClear
-                        placeholder="All Roles"
-                        onChange={setSelectedRoleFilter}
-                        options={roles?.map(r => ({ label: r.name, value: r.slug }))}
-                    />
+                    <div className="filter-select">
+                        <Select
+                            allowClear
+                            placeholder="All Roles"
+                            onChange={setSelectedRoleFilter}
+                            options={roles?.map(r => ({ label: r.name, value: r.slug }))}
+                        />
+                    </div>
                 </Space>
             </div>
 
@@ -206,8 +207,7 @@ export default function Users() {
                     </Space>
                 }
             >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-
+                <div className="drawer-form">
                     <div>
                         <p>Username:</p>
                         <Input
@@ -226,10 +226,9 @@ export default function Users() {
                         />
                     </div>
 
-                    <div style={{ marginBottom: 16 }}>
+                    <div className="role-section">
                         <p>Role:</p>
                         <Select
-                            style={{ width: '100%', marginBottom: 8 }}
                             value={selectValue}
                             onChange={(value) => {
                                 setSelectValue(value);
@@ -244,7 +243,7 @@ export default function Users() {
                             {roles?.filter(r => r.slug !== 'ADMIN').map(r => (
                                 <Select.Option key={r.id} value={r.name}>{r.name}</Select.Option>
                             ))}
-                            <Select.Option value="NEW_ROLE" style={{ fontWeight: 'bold', color: '#1890ff' }}>+ Create New Role</Select.Option>
+                            <Select.Option value="NEW_ROLE">+ Create New Role</Select.Option>
                         </Select>
 
                         {selectValue === 'NEW_ROLE' && (
@@ -254,15 +253,14 @@ export default function Users() {
                                 placeholder="Enter new role name"
                             />
                         )}
-                        <small style={{ color: '#888' }}>
+                        <small className="role-hint">
                             {selectValue === 'NEW_ROLE'
                                 ? "Enter the name for the new role. Permissions can be assigned on the Permissions page."
                                 : "Select an existing role to assign."}
                         </small>
                     </div>
-
                 </div>
             </Drawer>
-        </AdminContainer>
+        </AdminUsersStyled>
     )
 }

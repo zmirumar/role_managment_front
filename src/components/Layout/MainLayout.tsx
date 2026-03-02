@@ -1,28 +1,22 @@
 import { Layout } from 'antd';
 import Sidebar from '../Sidebar';
-import styled from 'styled-components';
 import React from 'react';
+import { LayoutStyled } from './style';
 
 const { Content } = Layout;
 
-const InnerContent = styled.div`
-  padding: 24px;
-  background: #f0f2f5; 
-  min-height: 100vh;
-`;
-
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <Layout style={{ minHeight: '100vh' }}>
+        <LayoutStyled>
             <Sidebar />
             <Layout>
                 <Content>
-                    <InnerContent>
+                    <div className="inner-content">
                         {children}
-                    </InnerContent>
+                    </div>
                 </Content>
             </Layout>
-        </Layout>
+        </LayoutStyled>
     );
 };
 
